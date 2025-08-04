@@ -1,0 +1,25 @@
+<div class="flex-center">
+	<div class="content">
+		@if(countDown() > -1) {
+			<app-lobby [playerCount]="playersColorIdxs.length" [players]="toPlayers()" />
+			<div style="text-align: center; font-size: 1rem">Game starts in {{ countDown() }}...</div>
+		} @else {
+			<h1>Select Players</h1>
+			@for(playerColorIdx of playersColorIdxs; track pIdx; let pIdx = $index) {
+				<div>Player {{ pIdx }}</div>
+					<div class="colors">
+					@for(color of Colors; track cIdx; let cIdx = $index) {
+						@if(playersColorIdxs.indexOf(cIdx) === -1) {
+							<div (click)="onColorSelect(pIdx, cIdx)" [ngStyle]="{ backgroundColor: color }"></div>
+						} @else if(playerColorIdx === cIdx) {
+							<div (click)="onColorSelect(pIdx, -1)" class="selected" [ngStyle]="{ backgroundColor: color }"></div>
+						}
+					}
+				</div>
+			}
+
+			<button class="btn clr-brown" [disabled]="isStartButtonDisabled()" (click)="startGame()">Start game</button>
+		}
+
+	</div>
+</div>

@@ -1,0 +1,144 @@
+@import "../../styles/colors.less";
+
+@cellSize: 3rem;
+@plankHeight: 10px;
+
+.flex-center {
+	width: 100%;
+	height: 100%;
+}
+
+#board-container {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	>div:nth-child(2) {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+#board {
+	display: flex;
+	flex-direction: column;
+	background-color: @contentBg;
+	width: max-content;
+	height: max-content;
+	border-radius: 6px;
+	padding: @plankHeight;
+
+	.row {
+		display: flex;
+		flex-direction: row;
+		width: max-content;
+		height: max-content;
+
+		.move-cell {
+			background-color: #563232;
+			width: @cellSize;
+			height: @cellSize;
+			border-radius: 6px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.plank-cell {
+			width: @cellSize;
+			height: @plankHeight;
+
+			&.vertical {
+				height: @cellSize;
+				width: @plankHeight;
+			}
+
+			&.horizontal {
+				&:last-child {
+					margin-right: 0;
+				}
+			}
+
+			&.mid {
+				width: @plankHeight;
+				height: @plankHeight;
+			}
+		}
+	}
+}
+
+.planks-slots-horizontal {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+
+	.plank {
+		width: @plankHeight;
+		height: (@cellSize + @cellSize);
+		background-color: yellow;
+		border-radius: 6px;
+		cursor: grab;
+
+		&.empty {
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+}
+
+.planks-slots-vertical {
+	display: flex;
+	flex-direction: column;
+
+	.plank {
+		width: @cellSize * 2;
+		height: @plankHeight;
+		background-color: yellow;
+		border-radius: 6px;
+		cursor: grab;
+
+		&.empty {
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+}
+
+.player {
+	width: @cellSize - 1rem;
+	height: @cellSize - 1rem;
+	border-radius: 5rem;
+	cursor: grab;
+}
+
+.selected{
+	opacity: 0.4;
+}
+
+.focused{
+	box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+}
+
+.custom-cursor {
+	position: absolute;
+	display: none;
+	pointer-events: none;
+}
+
+#plank-cursor-horizontal {
+	width: @plankHeight;
+	height: (@cellSize + @cellSize);
+	background-color: yellow;
+	border-radius: 6px;
+
+	&.selected{
+		opacity: 0.2;
+	}
+}
+
+#plank-cursor-vertical {
+	width: @plankHeight;
+	height: (@cellSize + @cellSize);
+	background-color: yellow;
+	border-radius: 6px;
+}

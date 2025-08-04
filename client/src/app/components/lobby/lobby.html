@@ -1,0 +1,11 @@
+<h1>Lobby</h1>
+
+<div class="player-count">{{ players.length }}/{{ playerCount }}</div>
+<div class="players-container">
+	@for(player of players; track $index) {
+		<div>
+			<div [ngStyle]="{ backgroundColor: player.color }"></div>
+			<div>{{ player.name }}</div>
+		</div>
+	}
+</div>

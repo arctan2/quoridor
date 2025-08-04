@@ -1,0 +1,87 @@
+<div class="flex-center" (pointerup)="onPointerUp($event)">
+	<div id="board-container"
+		#boardContainer
+		(pointermove)="onPointerMove($event)"
+		(pointerdown)="onPointerDown($event)"
+		(pointerup)="onPointerUp($event)"
+		(pointerleave)="onPointerLeave($event)"
+		(pointerenter)="onPointerEnter($event)"
+	>
+		<div #cursor id="cursor" class="custom-cursor">
+		</div>
+
+		<div class="planks-slots-horizontal">
+			@for(p of game.players[0].plankSlots.slots; track $index) {
+				@if(p) {
+					<div class="plank"></div>
+				} @else {
+					<div class="plank empty"></div>
+				}
+			}
+		</div>
+
+		<div>
+			@if(game.players.length >= 3) {
+				<div class="planks-slots-vertical">
+					@for(p of game.players[2].plankSlots.slots; track $index) {
+						@if(p) {
+							<div class="plank"></div>
+						} @else {
+							<div class="plank empty"></div>
+						}
+					}
+				</div>
+			}
+			<div id="board">
+				@for(row of game.board.board; track $index; let rIdx = $index) {
+					<div class="row">
+						@if(rIdx % 2 !== 0) {
+							@for(col of row; track $index; let cIdx = $index) {
+								@if(cIdx % 2 === 0) {
+									<div class="plank-cell horizontal"></div>
+								} @else {
+									<div class="plank-cell mid"></div>
+								}
+							}
+						} @else {
+							@for(col of row; track $index; let cIdx = $index) {
+								@if(cIdx % 2 === 0) {
+									<div class="move-cell">
+										@if(projectCoordToMoveCellId(rIdx, cIdx) in playerPosHash) {
+											<div class="player" [ngStyle]="{
+												backgroundColor: playerPosHash[projectCoordToMoveCellId(rIdx, cIdx)].color
+											}"></div>
+										}
+									</div>
+								} @else{
+									<div class="plank-cell vertical"></div>
+								}
+							}
+						}
+					</div>
+				}
+			</div>
+			@if(game.players.length === 4) {
+				<div class="planks-slots-vertical">
+					@for(p of game.players[3].plankSlots.slots; track $index) {
+						@if(p) {
+							<div class="plank"></div>
+						} @else {
+							<div class="plank empty"></div>
+						}
+					}
+				</div>
+			}
+		</div>
+
+		<div class="planks-slots-horizontal">
+			@for(p of game.players[0].plankSlots.slots; track $index) {
+				@if(p) {
+					<div class="plank"></div>
+				} @else {
+					<div class="plank empty"></div>
+				}
+			}
+		</div>
+	</div>
+</div>
