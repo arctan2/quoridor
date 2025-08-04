@@ -1,7 +1,9 @@
 @import "../../styles/colors.less";
 
 @cellSize: 3rem;
-@plankHeight: 10px;
+@plankThic: 0.6rem;
+@cellSizex2: @cellSize + @cellSize;
+@plankLen: @cellSizex2 + @plankThic;
 
 .flex-center {
 	width: 100%;
@@ -26,7 +28,8 @@
 	width: max-content;
 	height: max-content;
 	border-radius: 6px;
-	padding: @plankHeight;
+	padding: @plankThic;
+	touch-action: none;
 
 	.row {
 		display: flex;
@@ -46,11 +49,11 @@
 
 		.plank-cell {
 			width: @cellSize;
-			height: @plankHeight;
+			height: @plankThic;
 
 			&.vertical {
 				height: @cellSize;
-				width: @plankHeight;
+				width: @plankThic;
 			}
 
 			&.horizontal {
@@ -60,8 +63,8 @@
 			}
 
 			&.mid {
-				width: @plankHeight;
-				height: @plankHeight;
+				width: @plankThic;
+				height: @plankThic;
 			}
 		}
 	}
@@ -73,8 +76,8 @@
 	justify-content: space-around;
 
 	.plank {
-		width: @plankHeight;
-		height: (@cellSize + @cellSize);
+		width: @plankThic;
+		height: @plankLen;
 		background-color: yellow;
 		border-radius: 6px;
 		cursor: grab;
@@ -91,8 +94,8 @@
 	flex-direction: column;
 
 	.plank {
-		width: @cellSize * 2;
-		height: @plankHeight;
+		width: @plankLen;
+		height: @plankThic;
 		background-color: yellow;
 		border-radius: 6px;
 		cursor: grab;
@@ -126,8 +129,8 @@
 }
 
 #plank-cursor-horizontal {
-	width: @plankHeight;
-	height: (@cellSize + @cellSize);
+	height: @plankThic;
+	width: @plankLen;
 	background-color: yellow;
 	border-radius: 6px;
 
@@ -137,8 +140,8 @@
 }
 
 #plank-cursor-vertical {
-	width: @plankHeight;
-	height: (@cellSize + @cellSize);
+	width: @plankThic;
+	height: @plankLen;
 	background-color: yellow;
 	border-radius: 6px;
 }

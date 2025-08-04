@@ -38,15 +38,15 @@
 						@if(rIdx % 2 !== 0) {
 							@for(col of row; track $index; let cIdx = $index) {
 								@if(cIdx % 2 === 0) {
-									<div class="plank-cell horizontal"></div>
+									<div class="plank-cell horizontal" [id]="toId(rIdx, cIdx)"></div>
 								} @else {
-									<div class="plank-cell mid"></div>
+									<div class="plank-cell mid" [id]="toId(rIdx, cIdx)"></div>
 								}
 							}
 						} @else {
 							@for(col of row; track $index; let cIdx = $index) {
 								@if(cIdx % 2 === 0) {
-									<div class="move-cell">
+									<div class="move-cell" [id]="toId(rIdx, cIdx)">
 										@if(projectCoordToMoveCellId(rIdx, cIdx) in playerPosHash) {
 											<div class="player" [ngStyle]="{
 												backgroundColor: playerPosHash[projectCoordToMoveCellId(rIdx, cIdx)].color
@@ -54,7 +54,7 @@
 										}
 									</div>
 								} @else{
-									<div class="plank-cell vertical"></div>
+									<div class="plank-cell vertical" [id]="toId(rIdx, cIdx)"></div>
 								}
 							}
 						}
