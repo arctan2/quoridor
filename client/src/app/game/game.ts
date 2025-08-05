@@ -1,4 +1,4 @@
-import { Board } from "./board";
+import { Board, Orient } from "./board";
 import { Coord, Player } from "./player";
 
 export class GameState implements GameActions {
@@ -37,13 +37,16 @@ export class GameState implements GameActions {
 		return false;
 	}
 
-	placeObstacle(y: number, x: number) {
+	placePlankOfCurPlayer(plankIdx: number, y: number, x: number, orient: Orient) {
+		if(this.curPlayerIdx < 0 || this.curPlayerIdx >= this.players.length) return;
+		this.board.placePlank(y, x, orient);
+		this.players[this.curPlayerIdx].plankSlots.removePlank(plankIdx);
 	}
 }
 
 export interface GameActions {
 	changeTurn: () => void,
 	tryMovePlayer: (player: Player, y: number, x: number) => boolean,
-	placeObstacle: (y: number, x: number) => void
+	placePlankOfCurPlayer: (plankIdx: number, y: number, x: number, orient: Orient) => void
 }
 

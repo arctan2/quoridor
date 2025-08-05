@@ -1,9 +1,9 @@
-<div class="flex-center" (pointerup)="onPointerUp($event)">
+<div class="flex-center" (pointerup)="onPointerUp($event, 'outter')">
 	<div id="board-container"
 		#boardContainer
 		(pointermove)="onPointerMove($event)"
 		(pointerdown)="onPointerDown($event)"
-		(pointerup)="onPointerUp($event)"
+		(pointerup)="onPointerUp($event, 'boardContainer')"
 		(pointerleave)="onPointerLeave($event)"
 		(pointerenter)="onPointerEnter($event)"
 	>
@@ -13,9 +13,9 @@
 		<div class="planks-slots-horizontal">
 			@for(p of game.players[0].plankSlots.slots; track $index) {
 				@if(p) {
-					<div class="plank"></div>
+					<div [id]="`slot_${$index}`" class="plank"></div>
 				} @else {
-					<div class="plank empty"></div>
+					<div [id]="`slot_${$index}`" class="plank empty"></div>
 				}
 			}
 		</div>
@@ -25,9 +25,9 @@
 				<div class="planks-slots-vertical">
 					@for(p of game.players[2].plankSlots.slots; track $index) {
 						@if(p) {
-							<div class="plank"></div>
+							<div [id]="`slot_${$index}`" class="plank"></div>
 						} @else {
-							<div class="plank empty"></div>
+							<div [id]="`slot_${$index}`" class="plank empty"></div>
 						}
 					}
 				</div>
@@ -38,9 +38,21 @@
 						@if(rIdx % 2 !== 0) {
 							@for(col of row; track $index; let cIdx = $index) {
 								@if(cIdx % 2 === 0) {
-									<div class="plank-cell horizontal" [id]="toId(rIdx, cIdx)"></div>
+									<div
+										class="plank-cell horizontal"
+										[ngClass]="{
+											'plank-placed': col === Entity.Plank
+										}"
+										[id]="toId(rIdx, cIdx)"
+									></div>
 								} @else {
-									<div class="plank-cell mid" [id]="toId(rIdx, cIdx)"></div>
+									<div
+										class="plank-cell mid"
+										[ngClass]="{
+											'plank-placed': col === Entity.Plank
+										}"
+										[id]="toId(rIdx, cIdx)"
+									></div>
 								}
 							}
 						} @else {
@@ -54,7 +66,13 @@
 										}
 									</div>
 								} @else{
-									<div class="plank-cell vertical" [id]="toId(rIdx, cIdx)"></div>
+									<div
+										class="plank-cell vertical"
+										[ngClass]="{
+											'plank-placed': col === Entity.Plank
+										}"
+										[id]="toId(rIdx, cIdx)"
+									></div>
 								}
 							}
 						}
@@ -65,9 +83,9 @@
 				<div class="planks-slots-vertical">
 					@for(p of game.players[3].plankSlots.slots; track $index) {
 						@if(p) {
-							<div class="plank"></div>
+							<div [id]="`slot_${$index}`" class="plank"></div>
 						} @else {
-							<div class="plank empty"></div>
+							<div [id]="`slot_${$index}`" class="plank empty"></div>
 						}
 					}
 				</div>
@@ -75,11 +93,11 @@
 		</div>
 
 		<div class="planks-slots-horizontal">
-			@for(p of game.players[0].plankSlots.slots; track $index) {
+			@for(p of game.players[1].plankSlots.slots; track $index) {
 				@if(p) {
-					<div class="plank"></div>
+					<div [id]="`slot_${$index}`" class="plank"></div>
 				} @else {
-					<div class="plank empty"></div>
+					<div [id]="`slot_${$index}`" class="plank empty"></div>
 				}
 			}
 		</div>

@@ -27,7 +27,6 @@
 	background-color: @contentBg;
 	width: max-content;
 	height: max-content;
-	border-radius: 6px;
 	padding: @plankThic;
 	touch-action: none;
 
@@ -41,7 +40,6 @@
 			background-color: #563232;
 			width: @cellSize;
 			height: @cellSize;
-			border-radius: 6px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -50,6 +48,10 @@
 		.plank-cell {
 			width: @cellSize;
 			height: @plankThic;
+
+			&.plank-placed{
+				background-color: white;
+			}
 
 			&.vertical {
 				height: @cellSize;
@@ -78,8 +80,7 @@
 	.plank {
 		width: @plankThic;
 		height: @plankLen;
-		background-color: yellow;
-		border-radius: 6px;
+		background-color: white;
 		cursor: grab;
 
 		&.empty {
@@ -96,8 +97,7 @@
 	.plank {
 		width: @plankLen;
 		height: @plankThic;
-		background-color: yellow;
-		border-radius: 6px;
+		background-color: white;
 		cursor: grab;
 
 		&.empty {
@@ -110,8 +110,8 @@
 .player {
 	width: @cellSize - 1rem;
 	height: @cellSize - 1rem;
-	border-radius: 5rem;
 	cursor: grab;
+	border-radius: 3rem;
 }
 
 .selected{
@@ -131,17 +131,19 @@
 #plank-cursor-horizontal {
 	height: @plankThic;
 	width: @plankLen;
-	background-color: yellow;
-	border-radius: 6px;
+	background-color: white;
 
-	&.selected{
-		opacity: 0.2;
+	&.invalid{
+		background-color: red;
 	}
 }
 
 #plank-cursor-vertical {
 	width: @plankThic;
 	height: @plankLen;
-	background-color: yellow;
-	border-radius: 6px;
+	background-color: white;
+
+	&.invalid{
+		background-color: red;
+	}
 }

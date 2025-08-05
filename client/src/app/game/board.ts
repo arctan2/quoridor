@@ -1,7 +1,10 @@
 export enum Entity {
 	Path,
+	PlankPath,
 	Plank,
 }
+
+export enum Orient { H = "hori", V = "vert" }
 
 export class Board {
 	board: Entity[][];
@@ -17,14 +20,53 @@ export class Board {
 
 		for (let i = 0; i < end; i++) {
 			let row = [];
-			for (let j = 0; j < end; j++) {
-				row.push(Entity.Path);
+			if(i % 2 !== 0) {
+				for (let j = 0; j < end; j++) {
+					row.push(Entity.PlankPath);
+				}
+			} else {
+				for (let j = 0; j < end; j++) {
+					if(j % 2 !== 0) {
+						row.push(Entity.PlankPath);
+					} else {
+						row.push(Entity.Path);
+					}
+				}
 			}
 			this.board.push(row);
 		}
 	}
 
-	placeObstacle(y: number, x: number) {
-		this.board[y][x] = Entity.Plank;
+	canPlacePlank(y: number, x: number, orient: Orient): boolean {
+		if(Number.isNaN(x) || Number.isNaN(y)) return false;
+
+		const board = this.board;
+		if(orient === Orient.V) {
+			return board[y][x] === Entity.PlankPath &&
+				board[y + 1][x] === Entity.PlankPath &&
+				board[y + 2][x] === Entity.PlankPath;
+		} else {
+			return board[y][x] === Entity.PlankPath &&
+				board[y][x + 1] === Entity.PlankPath &&
+				board[y][x + 2] === Entity.PlankPath;
+		}
+	}
+
+	placePlank(y: number, x: number, orient: Orient) {
+		if(orient === Orient.V) {
+			this.board[y][x] = Entity.Plank;
+			this.board[y + 1][x] = Entity.Plank;
+			this.board[y + 2][x] = Entity.Plank;
+		} else {
+			this.board[y][x] = Entity.Plank;
+			this.board[y][x + 1] = Entity.Plank;
+			this.board[y][x + 2] = Entity.Plank;
+		}
+	}
+
+	tryPlacePlank(y: number, x: number, orient: Orient) {
+		if(this.canPlacePlank(y, x, orient)) {
+			this.placePlank(y, x, orient);
+		}
 	}
 }
