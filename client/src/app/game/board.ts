@@ -74,9 +74,15 @@ export class Board {
 		}
 	}
 
-	tryPlacePlank(y: number, x: number, orient: Orient) {
-		if(this.canPlacePlank(y, x, orient)) {
-			this.placePlank(y, x, orient);
+	unplacePlank(y: number, x: number, orient: Orient) {
+		if(orient === Orient.V) {
+			this.board[y][x] = Entity.PlankPath;
+			this.board[y + 1][x] = Entity.PlankPath;
+			this.board[y + 2][x] = Entity.PlankPath;
+		} else {
+			this.board[y][x] = Entity.PlankPath;
+			this.board[y][x + 1] = Entity.PlankPath;
+			this.board[y][x + 2] = Entity.PlankPath;
 		}
 	}
 }

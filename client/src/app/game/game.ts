@@ -66,13 +66,6 @@ export class GameState implements GameActions {
 			},
 		];
 
-		// {
-		// 	plankCheck: [0, 1],
-		// 	jumpCheck: [0, 2],
-		// 	hopCheck: [0, 1],
-		// 	diagCheck: [[1, 0], [-1, 0]]
-		// },
-
 		for(const { plankCheck, diagCheck } of checks) {
 			let curY = fromY + plankCheck[0];
 			let curX = fromX + plankCheck[1];
@@ -124,6 +117,45 @@ export class GameState implements GameActions {
 		return coords;
 	}
 
+	dfs(curY: number, curX: number, end: Coord, visited: Set<string>): boolean {
+		if(!this.board.isYXInBounds(curY, curX)) return false;
+		visited.add(`${curY}_${curX}`);
+
+		if(end.x === -1 && curY === end.y) return true;
+		if(end.y === -1 && curX === end.x) return true;
+
+		const possible = this.possibleMoves(curY, curX);
+
+		for(const p of possible) {
+			if(!visited.has(`${p.y}_${p.x}`)) {
+				if(this.dfs(p.y, p.x, end, visited)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	canPlacePlank(y: number, x: number, orient: Orient): boolean {
+		if(!this.board.canPlacePlank(y, x, orient)) {
+			return false;
+		}
+
+		this.board.placePlank(y, x, orient);
+
+		for(const p of this.players) {
+			if(!this.dfs(p.y, p.x, p.end, new Set)) {
+				this.board.unplacePlank(y, x, orient);
+				return false;
+			}
+		}
+
+		this.board.unplacePlank(y, x, orient);
+
+		return true;
+	}
+
 	movePlayerByColor(color: string, y: number, x: number) {
 		for(const p of this.players) {
 			if(p.color === color) {
@@ -146,5 +178,6 @@ export interface GameActions {
 	changeTurn: () => void,
 	movePlayerByColor: (color: string, y: number, x: number) => void,
 	placePlankOfCurPlayer: (plankIdx: number, y: number, x: number, orient: Orient) => void
+	canPlacePlank: (y: number, x: number, orient: Orient) => boolean;
 }
 
