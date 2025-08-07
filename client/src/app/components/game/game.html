@@ -6,29 +6,21 @@
 		(pointerup)="onPointerUp($event, 'boardContainer')"
 		(pointerleave)="onPointerLeave($event)"
 		(pointerenter)="onPointerEnter($event)"
+		[ngClass]="{ 'disable-input': game.isStopInput() }"
 	>
-		<div #cursor id="cursor" class="custom-cursor">
-		</div>
+		<div #cursor id="cursor" class="custom-cursor"></div>
 
-		<div class="planks-slots-horizontal">
-			@for(p of game.players[0].plankSlots.slots; track $index) {
-				@if(p) {
-					<div [id]="`slot_${$index}`" class="plank"></div>
-				} @else {
-					<div [id]="`slot_${$index}`" class="plank empty"></div>
-				}
+		<div class="planks-slots-horizontal" [ngClass]="{ 'disable-input': game.curPlayerIdx() !== 1 }">
+			@for(p of game.players[1].plankSlots.slots; track $index) {
+				<div [id]="`slot_${$index}`" [attr.data-player-idx]="1" [ngClass]="{ 'empty': !p }" class="plank"></div>
 			}
 		</div>
 
-		<div>
+		<div class="flex-row">
 			@if(game.players.length >= 3) {
-				<div class="planks-slots-vertical">
+				<div class="planks-slots-vertical" [ngClass]="{ 'disable-input': game.curPlayerIdx() !== 2 }">
 					@for(p of game.players[2].plankSlots.slots; track $index) {
-						@if(p) {
-							<div [id]="`slot_${$index}`" class="plank"></div>
-						} @else {
-							<div [id]="`slot_${$index}`" class="plank empty"></div>
-						}
+						<div [id]="`slot_${$index}`" [attr.data-player-idx]="2" [ngClass]="{ 'empty': !p }" class="plank"></div>
 					}
 				</div>
 			}
@@ -44,7 +36,7 @@
 											'plank-placed': col === Entity.Plank
 										}"
 										[id]="toId(rIdx, cIdx)"
-									></div>
+									><div class="test-abs">{{ rIdx + "-" + cIdx }}</div></div>
 								} @else {
 									<div
 										class="plank-cell mid"
@@ -52,18 +44,34 @@
 											'plank-placed': col === Entity.Plank
 										}"
 										[id]="toId(rIdx, cIdx)"
-									></div>
+									><div class="test-abs">{{ rIdx + "-" + cIdx }}</div></div>
 								}
 							}
 						} @else {
 							@for(col of row; track $index; let cIdx = $index) {
 								@if(cIdx % 2 === 0) {
-									<div class="move-cell" [id]="toId(rIdx, cIdx)">
-										@if(projectCoordToMoveCellId(rIdx, cIdx) in playerPosHash) {
-											<div class="player" [ngStyle]="{
-												backgroundColor: playerPosHash[projectCoordToMoveCellId(rIdx, cIdx)].color
-											}"></div>
+									<div
+										class="move-cell"
+										[id]="toId(rIdx, cIdx)"
+										[ngClass]="{
+											'possible-move': possibleMoves().has(toId(rIdx, cIdx))
+										}"
+									>
+										@if(toId(rIdx, cIdx) in playerPosHash()) {
+											<div
+												class="player"
+												[id]="toId(rIdx, cIdx)"
+												[ngStyle]="{
+													backgroundColor: playerPosHash()[toId(rIdx, cIdx)].color,
+												}"
+												[ngClass]="{
+													'disable-input':
+														this.game.players[game.curPlayerIdx()].color !==
+														playerPosHash()[toId(rIdx, cIdx)].color
+												}"
+											></div>
 										}
+										<div class="test-abs">{{ rIdx + "-" + cIdx }}</div>
 									</div>
 								} @else{
 									<div
@@ -72,7 +80,7 @@
 											'plank-placed': col === Entity.Plank
 										}"
 										[id]="toId(rIdx, cIdx)"
-									></div>
+									><div class="test-abs">{{ rIdx + "-" + cIdx }}</div></div>
 								}
 							}
 						}
@@ -80,25 +88,17 @@
 				}
 			</div>
 			@if(game.players.length === 4) {
-				<div class="planks-slots-vertical">
+				<div class="planks-slots-vertical" [ngClass]="{ 'disable-input': game.curPlayerIdx() !== 3 }">
 					@for(p of game.players[3].plankSlots.slots; track $index) {
-						@if(p) {
-							<div [id]="`slot_${$index}`" class="plank"></div>
-						} @else {
-							<div [id]="`slot_${$index}`" class="plank empty"></div>
-						}
+						<div [id]="`slot_${$index}`" [attr.data-player-idx]="3" [ngClass]="{ 'empty': !p }" class="plank"></div>
 					}
 				</div>
 			}
 		</div>
 
-		<div class="planks-slots-horizontal">
-			@for(p of game.players[1].plankSlots.slots; track $index) {
-				@if(p) {
-					<div [id]="`slot_${$index}`" class="plank"></div>
-				} @else {
-					<div [id]="`slot_${$index}`" class="plank empty"></div>
-				}
+		<div class="planks-slots-horizontal" [ngClass]="{ 'disable-input': game.curPlayerIdx() !== 0 }">
+			@for(p of game.players[0].plankSlots.slots; track $index) {
+				<div [id]="`slot_${$index}`" [attr.data-player-idx]="0" [ngClass]="{ 'empty': !p }" class="plank"></div>
 			}
 		</div>
 	</div>

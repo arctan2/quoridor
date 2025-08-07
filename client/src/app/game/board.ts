@@ -8,15 +8,14 @@ export enum Orient { H = "hori", V = "vert" }
 
 export class Board {
 	board: Entity[][];
-	size: number;
 	mid: number;
 
-	constructor(size: number = 9) {
-		this.size = size;
-		this.mid = Math.floor(size / 2);
-		this.board = [];
+	constructor(boardSize: number = 9) {
+		if(boardSize % 2 === 0) throw Error("boardSize can't be even");
 
-		const end = (size * 2) - 1;
+		const end = (boardSize * 2) - 1;
+		this.mid = boardSize - 1;
+		this.board = [];
 
 		for (let i = 0; i < end; i++) {
 			let row = [];
@@ -35,6 +34,17 @@ export class Board {
 			}
 			this.board.push(row);
 		}
+	}
+
+	isYXInBounds(y: number, x: number) {
+		const rows = this.board.length;
+		const cols = this.board[0].length;
+
+		return (0 <= y && y < rows) && (0 <= x && x < cols);
+	}
+
+	isYXPlank(y: number, x: number) {
+		return this.board[y][x] === Entity.Plank;
 	}
 
 	canPlacePlank(y: number, x: number, orient: Orient): boolean {

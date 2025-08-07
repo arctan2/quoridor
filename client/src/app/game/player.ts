@@ -14,9 +14,9 @@ export class Coord {
 	x: number;
 	y: number;
 
-	constructor(x: number = -1, y: number = -1) {
-		this.x = x;
+	constructor(y: number = -1, x: number = -1) {
 		this.y = y;
+		this.x = x;
 	}
 }
 
@@ -35,20 +35,20 @@ export class Player extends Coord {
 		this.plankSlots = new PlankSlots(plankSlotsCount);
 	}
 
-	setStart(x: number, y: number, boardSize: number) {
-		this.x = x;
+	setStart(y: number, x: number, boardLen: number) {
 		this.y = y;
+		this.x = x;
 
 		this.start.x = x;
 		this.start.y = y;
 
-		const half = Math.floor(boardSize / 2);
+		const half = Math.floor(boardLen / 2);
 
 		if(x === half) {
-			if(y === 0) this.end.y = boardSize - 1;
+			if(y === 0) this.end.y = boardLen - 1;
 			else this.end.y = 0;
 		} else {
-			if(x === 0) this.end.x = boardSize - 1;
+			if(x === 0) this.end.x = boardLen - 1;
 			else this.end.x = 0;
 		}
 	}

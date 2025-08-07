@@ -25,6 +25,6 @@ export class LocalGame {
 		this.game = new GameState;
 		this.actions = this.game;
 		this.game.initPlayers(players);
-		this.game.curPlayerIdx = 0;
+		this.game.curPlayerIdx.set(0);
 	}
 }

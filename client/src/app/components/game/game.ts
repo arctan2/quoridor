@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Renderer2, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, Renderer2, signal, ViewChild, WritableSignal } from '@angular/core';
 import { GameActions, GameState } from '../../game/game';
 import { Player } from '../../game/player';
 import { NgClass, NgStyle } from '@angular/common';
@@ -26,25 +26,26 @@ export class Game {
 	Entity = Entity;
 	curCursor = signal<Cursor>(new Cursor);
 	selectedElement: HTMLElement | null = null;
-	playerPosHash: { [_: string]: Player } = {};
+	playerPosHash: WritableSignal<{ [_: string]: Player }> = signal({});
+	possibleMoves: WritableSignal<Set<string>> = signal(new Set);
 
 	constructor(private renderer: Renderer2) {
 		this.game = new GameState;
 		this.actions = this.game;
 	}
 
-	projectCoordToMoveCellId(rIdx: number, cIdx: number) {
-		return this.toId(Math.floor(rIdx / 2), Math.floor(cIdx / 2));
+	ngOnInit() {
+		this.updatePlayerPosHash();
 	}
 
-	ngOnInit() {
+	updatePlayerPosHash() {
 		const hash: { [_: string]: Player } = {};
 
 		for (const player of this.game.players) {
 			hash[this.toId(player.y, player.x)] = player;
 		}
 
-		this.playerPosHash = hash;
+		this.playerPosHash.set(hash);
 	}
 
 	getWidthHeightFromEl(el: HTMLElement) {
@@ -105,15 +106,36 @@ export class Game {
 		return { r: o[0], c: o[1] };
 	}
 
+	updatePossibleMoves() {
+		if(this.selectedElement === null) {
+			return;
+		}
+		const { r, c } = this.idToIdx(this.selectedElement.id);
+
+		let s = new Set<string>;
+
+		for(const p of this.game.possibleMoves(r, c)) {
+			s.add(this.toId(p.y, p.x))
+		}
+
+		this.possibleMoves.set(s);
+	}
+
 	onPointerDown(e: PointerEvent) {
 		const target = e.target as HTMLElement | null;
 
 		const selected = this.selectedElement;
 
+
 		if(selected) {
+			if(target && selected.classList.contains("player") && this.handlePlayerUp(e, target)) {
+				return;
+			}
+
 			selected.classList.remove("focused");
 			this.selectedElement = null;
 		}
+		this.possibleMoves.set(new Set);
 
 		if(!target) return;
 
@@ -128,6 +150,7 @@ export class Game {
 			this.setCursor("player", target.cloneNode() as HTMLElement, true);
 			this.selectedElement = target;
 			target.classList.add("selected", "focused");
+			this.updatePossibleMoves();
 		}
 		this.placeCursorOnMouse(e, this.cursorRef);
 	}
@@ -175,9 +198,7 @@ export class Game {
 
 		const { finalRow, finalCol, orient } = this.getFinalRowColOrient(e, target);
 
-		const element = board.querySelector(
-			this.toId(finalRow, finalCol, "#")
-		) as HTMLElement;
+		const element = board.querySelector(this.toId(finalRow, finalCol, "#")) as HTMLElement;
 
 		this.setCursorYX(element.offsetTop, element.offsetLeft);
 
@@ -195,6 +216,19 @@ export class Game {
 		}
 	}
 
+	handlePlayerUp(e: PointerEvent, target: HTMLElement) {
+		if(this.possibleMoves().has(target.id)) {
+			const { r, c } = this.idToIdx(target.id);
+			this.actions.movePlayerByColor(this.game.players[this.game.curPlayerIdx()].color, r, c);
+			this.updatePlayerPosHash();
+			this.possibleMoves.set(new Set);
+			this.actions.changeTurn();
+			return true;
+		}
+
+		return false;
+	}
+
 	onPointerUp(e: PointerEvent, container: string) {
 		document.body.style.cursor = "default";
 		this.hideCursor();
@@ -210,7 +244,8 @@ export class Game {
 
 		if(classList.contains("plank")) {
 			this.handlePlankUp(e, target);
-			return;
+		} else if(classList.contains("player")) {
+			this.handlePlayerUp(e, target);
 		}
 	}
 
