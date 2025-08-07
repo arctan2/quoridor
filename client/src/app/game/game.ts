@@ -166,18 +166,18 @@ export class GameState implements GameActions {
 		}
 	}
 
-	placePlankOfCurPlayer(plankIdx: number, y: number, x: number, orient: Orient) {
+	placePlankOfCurPlayer(y: number, x: number, orient: Orient) {
 		const curPlayerIdx = this.curPlayerIdx();
 		if(curPlayerIdx < 0 || curPlayerIdx >= this.players.length) return;
 		this.board.placePlank(y, x, orient);
-		this.players[curPlayerIdx].plankSlots.removePlank(plankIdx);
+		this.players[curPlayerIdx].planksLeft.update(v => Math.max(v - 1, 0));
 	}
 }
 
 export interface GameActions {
 	changeTurn: () => void,
 	movePlayerByColor: (color: string, y: number, x: number) => void,
-	placePlankOfCurPlayer: (plankIdx: number, y: number, x: number, orient: Orient) => void
+	placePlankOfCurPlayer: (y: number, x: number, orient: Orient) => void
 	canPlacePlank: (y: number, x: number, orient: Orient) => boolean;
 }
 

@@ -210,13 +210,12 @@ export class Game {
 	handlePlankUp(e: PointerEvent, target: HTMLElement) {
 		const { finalRow, finalCol, orient } = this.getFinalRowColOrient(e, target);
 		if(this.actions.canPlacePlank(finalRow, finalCol, orient)) {
-			const idx = Number(this.selectedElement?.id.replace("slot_", ""));
-			this.actions.placePlankOfCurPlayer(idx, finalRow, finalCol, orient);
+			this.actions.placePlankOfCurPlayer(finalRow, finalCol, orient);
 			this.actions.changeTurn();
 		}
 	}
 
-	handlePlayerUp(e: PointerEvent, target: HTMLElement) {
+	handlePlayerUp(_e: PointerEvent, target: HTMLElement) {
 		if(this.possibleMoves().has(target.id)) {
 			const { r, c } = this.idToIdx(target.id);
 			this.actions.movePlayerByColor(this.game.players[this.game.curPlayerIdx()].color, r, c);

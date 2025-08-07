@@ -1,14 +1,4 @@
-export class PlankSlots {
-	slots: boolean[];
-
-	constructor(slotsCount: number) {
-		this.slots = new Array<boolean>(slotsCount).fill(true, 0, slotsCount);
-	}
-
-	removePlank(idx: number) {
-		this.slots[idx] = false;
-	}
-}
+import { signal, WritableSignal } from "@angular/core";
 
 export class Coord {
 	x: number;
@@ -23,7 +13,7 @@ export class Coord {
 export class Player extends Coord {
 	name: string;
 	color: string;
-	plankSlots: PlankSlots;
+	planksLeft: WritableSignal<number>;
 
 	start: Coord = new Coord();
 	end: Coord = new Coord();
@@ -32,7 +22,7 @@ export class Player extends Coord {
 		super();
 		this.name = name;
 		this.color = color;
-		this.plankSlots = new PlankSlots(plankSlotsCount);
+		this.planksLeft = signal(plankSlotsCount);
 	}
 
 	setStart(y: number, x: number, boardLen: number) {

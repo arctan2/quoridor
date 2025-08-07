@@ -3,10 +3,11 @@ import { Game } from '../../game/game';
 import { GameActions, GameState } from '../../../game/game';
 import { getLocalGameState } from '../../../game/session-store';
 import { Router } from '@angular/router';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-local-game',
-  imports: [Game],
+  imports: [Game, NgStyle],
   templateUrl: './local-game.html',
   styleUrl: './local-game.less'
 })
@@ -15,6 +16,7 @@ export class LocalGame {
 
 	game: GameState | null = null;
 	actions: GameActions | null = null;
+	Math = Math;
 
 	ngOnInit() {
 		const players = getLocalGameState();
