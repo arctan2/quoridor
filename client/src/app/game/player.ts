@@ -13,24 +13,28 @@ export class Coord {
 export class Player extends Coord {
 	name: string;
 	color: string;
+	id: string;
 	planksLeft: WritableSignal<number>;
 
-	start: Coord = new Coord();
 	end: Coord = new Coord();
 
-	constructor(name: string = "player", color: string = "#000000", plankSlotsCount: number = 9) {
+	constructor(id: string, name: string = "player", color: string = "#000000", plankSlotsCount: number = 9) {
 		super();
+		this.id = id;
 		this.name = name;
 		this.color = color;
 		this.planksLeft = signal(plankSlotsCount);
 	}
 
+	isAtEnd(): boolean{
+		if(this.end.x === -1 && this.y === this.end.y) return true;
+		if(this.end.y === -1 && this.x === this.end.x) return true;
+		return false;
+	}
+
 	setStart(y: number, x: number, boardLen: number) {
 		this.y = y;
 		this.x = x;
-
-		this.start.x = x;
-		this.start.y = y;
 
 		const half = Math.floor(boardLen / 2);
 
@@ -43,5 +47,12 @@ export class Player extends Coord {
 		}
 	}
 }
+
+export interface PlayerInfo {
+	name: string;
+	id: string;
+	color: string;
+}
+
 
 export const Colors = ["#00ff00", "#ff0000", "#ffff00", "#0000ff"];

@@ -27,7 +27,7 @@ export class LocalLobby {
 	}
 
 	toPlayers() {
-		return this.playersColorIdxs.map((p, idx) => new Player(`Player ${idx}`, Colors[p]));
+		return this.playersColorIdxs.map((p, idx) => new Player(`p${idx}`, `Player ${idx}`, Colors[p]));
 	}
 
 	startGame() {

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Player } from '../../game/player';
+import { PlayerInfo } from '../../game/player';
 import { NgStyle } from '@angular/common';
 
 @Component({
@@ -10,6 +10,6 @@ import { NgStyle } from '@angular/common';
 })
 export class Lobby {
 	@Input() playerCount: number = 0;
-	@Input() players: Player[] = [];
+	@Input() players: PlayerInfo[] = [];
 }
 

@@ -1,0 +1,37 @@
+<div class="flex-center">
+	<div>
+		@if(ws.connected() && errMsg() === "") {
+			<h1>Join Lobby</h1>
+
+			<div>
+				<label>Select color</label>
+				<div class="colors">
+					@for(color of availableColors(); track $index) {
+						<div
+							[ngStyle]="{ backgroundColor: color }"
+							[ngClass]="{ selected: color === curSelectedColor() }"
+							(click)="curSelectedColor.set(color)"
+						></div>
+					}
+				</div>
+			</div>
+
+			<div>
+				<label>name: </label>
+				<input type="text" [(ngModel)]="playerName"/>
+			</div>
+
+			@if(inputErrMsg() !== "") {
+				<div class="err-msg">{{ inputErrMsg() }}</div>
+			}
+
+			<button (click)="onJoinClick()" class="btn clr-brown">join game</button>
+		} @else if(ws.errorMsg() === null) {
+			<div>Connecting to server...</div>
+		} @else if(ws.errorMsg() !== "") {
+			<div>{{ ws.errorMsg() }}</div>
+		} @else {
+			<div>{{ errMsg() }}</div>
+		}
+	</div>
+</div>

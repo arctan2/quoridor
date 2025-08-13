@@ -1,0 +1,23 @@
+<div class="flex-center">
+	<div>
+		@if(ws.connected()) {
+			<h1>Create Lobby</h1>
+
+			<div>
+				<label>Lobby size</label>
+
+				<div class="sizes-list">
+					<div (click)="curLobbySize.set(2)" [ngClass]="{ 'selected': curLobbySize() === 2 }">2</div>
+					<div (click)="curLobbySize.set(3)" [ngClass]="{ 'selected': curLobbySize() === 3 }">3</div>
+					<div (click)="curLobbySize.set(4)" [ngClass]="{ 'selected': curLobbySize() === 4 }">4</div>
+				</div>
+			</div>
+
+			<button (click)="onCreateClick()" class="btn clr-brown">create</button>
+		} @else if(ws.errorMsg() === null) {
+			<div>Connecting to server...</div>
+		} @else {
+			<div>{{ ws.errorMsg() }}</div>
+		}
+	</div>
+</div>

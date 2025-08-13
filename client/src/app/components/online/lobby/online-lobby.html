@@ -1,1 +1,14 @@
-<p>lobby works!</p>
+<div class="flex-center">
+	<div>
+		@if(ws.connected() && errMsg() === "") {
+			<app-lobby [players]="players()" [playerCount]="lobbySize()" />
+			<button class="btn clr-brown" (click)="copyLink()">@if(!isLinkCopied()) { copy game link } @else { copied! }</button>
+		} @else if(ws.errorMsg() === null) {
+			<div>Connecting to server...</div>
+		} @else if(ws.errorMsg() !== "") {
+			<div>{{ ws.errorMsg() }}</div>
+		} @else {
+			<div>{{ errMsg() }}</div>
+		}
+	</div>
+</div>

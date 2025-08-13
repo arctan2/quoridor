@@ -7,7 +7,7 @@ describe('Game', () => {
 	let players: Player[];
 
 	beforeEach(() => {
-		players = [0, 1, 2, 3].map((p, idx) => new Player(`Player ${idx}`, Colors[p]));
+		players = [0, 1, 2, 3].map((p, idx) => new Player(`p${idx}`, `Player ${idx}`, Colors[p]));
 		game = new GameState;
 		game.initPlayers(players);
 		game.curPlayerIdx.set(0);

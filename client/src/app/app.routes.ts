@@ -2,8 +2,10 @@ import { Routes } from '@angular/router';
 import { Home } from './components/home/home';
 import { LocalLobby } from './components/local/lobby/local-lobby';
 import { LocalGame } from './components/local/game/local-game';
-import { OnlineLobby } from './components/online/lobby/online-lobby';
+import { CreateOnlineLobby } from './components/online/create-lobby/create-lobby';
 import { OnlineGame } from './components/online/game/online-game';
+import { JoinLobby } from './components/online/join-lobby/join-lobby';
+import { OnlineLobby } from './components/online/lobby/online-lobby';
 
 export const routes: Routes = [
 	{
@@ -27,11 +29,19 @@ export const routes: Routes = [
 		path: "online",
 		children: [
 			{
-				path: "lobby",
+				path: "create-lobby",
+				component: CreateOnlineLobby
+			},
+			{
+				path: "join-lobby/:id",
+				component: JoinLobby
+			},
+			{
+				path: "lobby/:id",
 				component: OnlineLobby
 			},
 			{
-				path: "game",
+				path: "game/:id",
 				component: OnlineGame
 			},
 		],

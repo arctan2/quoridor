@@ -3,15 +3,12 @@ import { Board, Orient } from "./board";
 import { Coord, Player } from "./player";
 
 export class GameState implements GameActions {
-	board: Board;
-	players: Player[];
+	board: Board = new Board;
+	players: Player[] = [];
+	ranks: Player[] = [];
 	curPlayerIdx: WritableSignal<number> = signal(-1);
 	isStopInput: WritableSignal<boolean> = signal(false);
-
-	constructor() {
-		this.board = new Board;
-		this.players = [];
-	}
+	isGameOver: WritableSignal<boolean> = signal(false);
 
 	initPlayers(players: Player[]) {
 		const playerPos = [
@@ -30,10 +27,16 @@ export class GameState implements GameActions {
 
 	changeTurn() {
 		this.curPlayerIdx.update(v => {
-			if (v + 1 >= this.players.length) {
-				return 0;
+			let temp = v + 1;
+			if(temp >= this.players.length) {
+				temp = 0;
 			}
-			return v + 1;
+			while(this.players[temp].isAtEnd()) {
+				temp++;
+				if(temp >= this.players.length) temp = 0;
+				if(temp === v) return temp;
+			}
+			return temp;
 		});
 	}
 
@@ -156,28 +159,43 @@ export class GameState implements GameActions {
 		return true;
 	}
 
-	movePlayerByColor(color: string, y: number, x: number) {
+	checkIsGameOver() {
+		if(this.ranks.length === this.players.length - 1) {
+			for(const p of this.players) {
+				if(this.ranks.findIndex(r => r.id === p.id) === -1) {
+					this.ranks.push(p);
+					this.isGameOver.set(true);
+					return;
+				}
+			}
+		}
+	}
+
+	movePlayerById(id: string, y: number, x: number) {
 		for(const p of this.players) {
-			if(p.color === color) {
+			if(p.id === id) {
 				p.y = y;
 				p.x = x;
+				if(p.isAtEnd()) {
+					this.ranks.push(p);
+				}
 				break;
 			}
 		}
 	}
 
-	placePlankOfCurPlayer(y: number, x: number, orient: Orient) {
-		const curPlayerIdx = this.curPlayerIdx();
-		if(curPlayerIdx < 0 || curPlayerIdx >= this.players.length) return;
+	placePlankOfPlayer(pid: string, y: number, x: number, orient: Orient) {
+		const playerIdx = this.players.findIndex(p => p.id === pid);
+		if(playerIdx === -1) return;
 		this.board.placePlank(y, x, orient);
-		this.players[curPlayerIdx].planksLeft.update(v => Math.max(v - 1, 0));
+		this.players[playerIdx].planksLeft.update(v => Math.max(v - 1, 0));
 	}
 }
 
 export interface GameActions {
 	changeTurn: () => void,
-	movePlayerByColor: (color: string, y: number, x: number) => void,
-	placePlankOfCurPlayer: (y: number, x: number, orient: Orient) => void
+	movePlayerById: (id: string, y: number, x: number) => void,
+	placePlankOfPlayer: (pid: string, y: number, x: number, orient: Orient) => void
 	canPlacePlank: (y: number, x: number, orient: Orient) => boolean;
 }
 

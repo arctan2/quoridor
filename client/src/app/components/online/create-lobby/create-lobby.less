@@ -6,7 +6,7 @@
 	height: 100%;
 	font-family: monospace;
 
-	h1 {
+	h1{
 		font-size: 1.75rem;
 		text-align: center;
 	}
@@ -17,27 +17,42 @@
 		flex-direction: column;
 	}
 
-	>div {
-		width: 100%;
-		max-width: 30rem;
-		height: max-content;
+	>div{
 		background-color: @contentBg;
 		border-radius: 6px;
 		padding: 1rem;
 	}
 
-	>div>* {
+	>div>*{
 		margin-bottom: 1rem;
 	}
 
-	button{
-		width: max-content;
-		align-self: center;
-	}
-
-	label {
+	label{
 		font-size: 0.8rem;
 		margin-bottom: 0.1rem;
 	}
 }
 
+.sizes-list{
+	display: flex;
+	flex-direction: row;
+	margin-top: 0.5rem;
+
+	@size: 2rem;
+
+	>div{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: @size;
+		height: @size;
+		margin-right: 0.1rem;
+		border-radius: 6px;
+		cursor: pointer;
+
+		&.selected {
+			background-color: @hoverColor;
+			color: brown;
+		}
+	}
+}

@@ -1,9 +1,8 @@
-<div (pointerup)="onPointerUp($event, 'outter')">
+<div>
 	<div id="board-container"
 		#boardContainer
 		(pointermove)="onPointerMove($event)"
 		(pointerdown)="onPointerDown($event)"
-		(pointerup)="onPointerUp($event, 'boardContainer')"
 		(pointerleave)="onPointerLeave($event)"
 		(pointerenter)="onPointerEnter($event)"
 		[ngClass]="{ 'disable-input': game.isStopInput() }"
@@ -22,7 +21,7 @@
 										'plank-placed': col === Entity.Plank
 									}"
 									[id]="toId(rIdx, cIdx)"
-								><div class="test-abs">{{ rIdx + "-" + cIdx }}</div></div>
+								></div>
 							} @else {
 								<div
 									class="plank-cell mid"
@@ -30,7 +29,7 @@
 										'plank-placed': col === Entity.Plank
 									}"
 									[id]="toId(rIdx, cIdx)"
-								><div class="test-abs">{{ rIdx + "-" + cIdx }}</div></div>
+								></div>
 							}
 						}
 					} @else {
@@ -57,7 +56,6 @@
 											}"
 										></div>
 									}
-									<div class="test-abs">{{ rIdx + "-" + cIdx }}</div>
 								</div>
 							} @else{
 								<div
@@ -66,13 +64,32 @@
 										'plank-placed': col === Entity.Plank
 									}"
 									[id]="toId(rIdx, cIdx)"
-								><div class="test-abs">{{ rIdx + "-" + cIdx }}</div></div>
+								></div>
 							}
 						}
 					}
 				</div>
 			}
 		</div>
+
+		@if(game.isGameOver()) {
+			<div id="game-over-container">
+				<h1>Game Over</h1>
+
+				<div id="ranking-list">
+					@for(rank of game.ranks; track $index) {
+						<div>
+							<div [ngStyle]="{ 'color': rank.color }">#{{ $index + 1 }}</div>
+							<div>{{ rank.name }}</div>
+						</div>
+					}
+				</div>
+
+				<div>
+					<button class="btn" (click)="goToHome()">Home</button>
+				</div>
+			</div>
+		}
 
 		<div
 			class="plank"
