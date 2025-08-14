@@ -37,6 +37,8 @@ export class OnlineLobby {
 
 	players = signal<PlayerInfo[]>([]);
 	lobbySize = signal<number>(0);
+	countDownInterval = 0;
+	countDown = signal(-1);
 
 	@HostListener('window:beforeunload', ['$event'])
 	onWindowResize(event: Event) {
@@ -61,6 +63,7 @@ export class OnlineLobby {
 			sessionStorage.removeItem(SessionStorageKey.LastJoineeData);
 			sessionStorage.setItem(SessionStorageKey.PlayerId, data.id);
 			this.errMsg.set("");
+			this.beginCountDown();
 			return;
 		}
 
@@ -69,6 +72,23 @@ export class OnlineLobby {
 		} else {
 			this.onConnect();
 		}
+	}
+
+	beginCountDown() {
+		clearInterval(this.countDownInterval);
+
+		this.countDown.set(5);
+
+		this.countDownInterval = setInterval(() => {
+			if(this.countDown() <= 0) {
+				const id = this.route.snapshot.paramMap.get("id");
+				clearInterval(this.countDownInterval);
+				this.router.navigate(["online", "game", id], { replaceUrl: true });
+				return;
+			}
+
+			this.countDown.update(v => v - 1);
+		}, 1000);
 	}
 
 	onConnect() {
@@ -107,6 +127,7 @@ export class OnlineLobby {
 		this.ws.subscribe("/user/lobby/game-start", dataStr => {
 			const data: WsResponse<string> = JSON.parse(dataStr);
 			sessionStorage.setItem(SessionStorageKey.PlayerId, data.data);
+			this.beginCountDown();
 		});
 
 		this.ws.send(`/app/lobby/${id}/info`, null);

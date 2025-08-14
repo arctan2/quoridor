@@ -1,1 +1,35 @@
-<p>game works!</p>
+<div class="flex-center">
+	@if(ws.connected() && errMsg() === "") {
+		@if(game() !== null && actions() !== null) {
+			<div class="flex-center">
+				<div id="game-info">
+					@for(p of game()?.players; track $index) {
+						<div class="player-info" [ngStyle]="{
+							borderColor: p.color, opacity: ($index === game()?.curPlayerIdx() ? 1 : 0.3).toString()
+						}">
+							<div class="player-name">{{ p.name }}</div>
+							<div>
+								Planks:
+								<div class="planks-left">
+									@for(a of [].constructor(p.planksLeft()); track $index) {
+										<div></div>
+									}
+								</div>({{ p.planksLeft() }})
+							</div>
+						</div>
+					}
+				</div>
+				<div class="board-container">
+					<app-game [game]="game()!" [actions]="actions()!" />
+				</div>
+			</div>
+		}
+	} @else if(ws.errorMsg() === null) {
+		<div>Connecting to server...</div>
+	} @else if(ws.errorMsg() !== "") {
+		<div>{{ ws.errorMsg() }}</div>
+	} @else {
+		<div>{{ errMsg() }}</div>
+	}
+</div>
+

@@ -208,14 +208,14 @@ export class Game {
 
 		this.setCursorYX(element.offsetTop, element.offsetLeft);
 
-		if (!this.actions.canPlacePlank(finalRow, finalCol, orient)) {
+		if (!this.game.canPlacePlank(finalRow, finalCol, orient)) {
 			cursor.classList.add("invalid");
 		}
 	}
 
 	handlePlankUp(e: PointerEvent, target: HTMLElement) {
 		const { finalRow, finalCol, orient } = this.getFinalRowColOrient(e, target);
-		if (this.actions.canPlacePlank(finalRow, finalCol, orient)) {
+		if (this.game.canPlacePlank(finalRow, finalCol, orient)) {
 			this.actions.placePlankOfPlayer(this.game.players[this.game.curPlayerIdx()].id, finalRow, finalCol, orient);
 			this.actions.changeTurn();
 		}

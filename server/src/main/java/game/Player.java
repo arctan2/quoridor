@@ -25,6 +25,10 @@ public class Player extends Coord {
 		return false;
 	}
 
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
 	public void setStart(int y, int x, int boardLen) {
 		this.y = y;
 		this.x = x;

@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Set;
 
 public class GameState implements GameActions {
-	Board board = new Board(9);
-	List<Player> players = new ArrayList<>();
-	List<Player> ranks = new ArrayList<>();
-	int curPlayerIdx = -1;
-	boolean isStopInput = false;
-	boolean isGameOver = false;
+	public Board board = new Board(9);
+	public List<Player> players = new ArrayList<>();
+	public List<Player> ranks = new ArrayList<>();
+	public int curPlayerIdx = -1;
+	public boolean isStopInput = false;
+	public boolean isGameOver = false;
 
 	public GameState(List<Player> players) {
 		Coord[] playerPos = {
@@ -23,10 +23,10 @@ public class GameState implements GameActions {
 
 		for (int i = 0; i < players.size(); i++) {
 			players.get(i).setStart(playerPos[i].y, playerPos[i].x, this.board.board.length);
-			players.get(i).id = players.get(i).name;
 		}
 
 		this.players = players;
+		this.curPlayerIdx = 0;
 	}
 
 	@Override
@@ -62,6 +62,25 @@ public class GameState implements GameActions {
 		{{0, 1}, {0, -1}},
 		{{0, 1}, {0, -1}}
 	};
+
+	public boolean isPlayerSessionIdValid(String sessionId) {
+		for(Player p : players) {
+			if(p.sessionId.equals(sessionId)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void updateSessionIdOfPlayerId(String playerId, String sessionId) {
+		for(Player p : players) {
+			if(p.id.equals(playerId)) {
+				p.setSessionId(sessionId);
+				break;
+			}
+		}
+	}
 
 	List<Coord> possibleMoves(int fromY, int fromX) {
 		List<Coord> coords = new ArrayList<>();
@@ -138,7 +157,6 @@ public class GameState implements GameActions {
 		return false;
 	}
 
-	@Override
 	public boolean canPlacePlank(int y, int x, Board.Orient orient) {
 		if(!this.board.canPlacePlank(y, x, orient)) {
 			return false;

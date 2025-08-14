@@ -10,7 +10,7 @@ public class Board {
 	public static enum Orient { H, V };
 
 	public Entity[][] board;
-	int mid;
+	public int mid;
 
 	Board(int boardSize) {
 		if(boardSize % 2 == 0) throw new IllegalArgumentException("boardSize can't be even");

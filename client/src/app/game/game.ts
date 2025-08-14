@@ -196,6 +196,5 @@ export interface GameActions {
 	changeTurn: () => void,
 	movePlayerById: (id: string, y: number, x: number) => void,
 	placePlankOfPlayer: (pid: string, y: number, x: number, orient: Orient) => void
-	canPlacePlank: (y: number, x: number, orient: Orient) => boolean;
 }
 

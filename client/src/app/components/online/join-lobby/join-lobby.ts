@@ -2,7 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { WebsocketService } from '../../../websocket/websocket-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WsResponse } from '../../../types/response';
-import { NgClass, NgStyle } from '@angular/common';
+import { NgClass, NgStyle, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SessionStorageKey } from '../../../game/session-store';
 
@@ -24,7 +24,7 @@ export class JoinLobby {
 	inputErrMsg = signal("");
 	playerName = "";
 
-	constructor(ws: WebsocketService) { this.ws = ws; }
+	constructor(ws: WebsocketService, private location: Location) { this.ws = ws; }
 
 	@HostListener('window:beforeunload', ['$event'])
 	onWindowResize(event: Event) {
@@ -83,7 +83,17 @@ export class JoinLobby {
 			const data: WsResponse<string | null> = JSON.parse(dataStr);
 
 			if(data.err) {
-				this.errMsg.set(data.msg);
+				if(data.msg === "The color is already taken.") {
+					this.availableColors.update(colors => colors.filter((c: string) => c !== this.curSelectedColor()));
+					if(this.availableColors().length === 0) {
+						alert("Lobby is full.");
+						this.location.back();
+					} else {
+						alert("The color is already taken. Please pick another color");
+					}
+				} else {
+					this.errMsg.set(data.msg);
+				}
 				this.ws.disconnect();
 				return;
 			}

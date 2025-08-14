@@ -1,7 +1,7 @@
 export enum Entity {
-	Path,
-	PlankPath,
-	Plank,
+	Path = "Path",
+	PlankPath = "PlankPath",
+	Plank = "Plank",
 }
 
 export enum Orient { H = "hori", V = "vert" }

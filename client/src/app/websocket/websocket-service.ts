@@ -75,6 +75,14 @@ export class WebsocketService {
 		});
 	}
 
+	sendStr(destination: string, body: string): void {
+		if (!this.connected()) {
+			throw new Error('WebSocket not connected yet');
+		}
+
+		this.stompClient.publish({ destination, body });
+	}
+
 	disconnect() {
 		if(this.connected()) {
 			this.stompClient.deactivate();

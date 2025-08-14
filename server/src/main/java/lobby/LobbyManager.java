@@ -82,6 +82,17 @@ public class LobbyManager {
 	}
 
 	public void deleteLobby(String id) {
+		Lobby lobby = lobbies.get(id);
+		
+		if(lobby == null) return;
+
+		for(Player p : lobby.players) {
+			if(playersCurrentLobby.contains(p.sessionId)) {
+				playersCurrentLobby.remove(p.sessionId);
+				break;
+			}
+		}
+
 		lobbies.remove(id);
 	}
 

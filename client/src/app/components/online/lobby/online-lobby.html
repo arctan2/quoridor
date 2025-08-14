@@ -2,7 +2,16 @@
 	<div>
 		@if(ws.connected() && errMsg() === "") {
 			<app-lobby [players]="players()" [playerCount]="lobbySize()" />
-			<button class="btn clr-brown" (click)="copyLink()">@if(!isLinkCopied()) { copy game link } @else { copied! }</button>
+			@if(countDown() === -1) {
+				<div class="message">
+					Waiting for players to join...
+				</div>
+				<button class="btn clr-brown" (click)="copyLink()">@if(!isLinkCopied()) { copy game link } @else { copied! }</button>
+			} @else {
+				<div class="message">
+					Game will start in {{ countDown() }}
+				</div>
+			}
 		} @else if(ws.errorMsg() === null) {
 			<div>Connecting to server...</div>
 		} @else if(ws.errorMsg() !== "") {
