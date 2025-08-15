@@ -1,9 +1,9 @@
 import { Component, ElementRef, HostListener, inject, Input, Renderer2, signal, ViewChild, WritableSignal } from '@angular/core';
 import { GameActions, GameState } from '../../game/game';
-import { Player } from '../../game/player';
 import { NgClass, NgStyle } from '@angular/common';
 import { Entity, Orient } from '../../game/board';
 import { Router } from '@angular/router';
+import { idToIdx, toId } from '../../ts/utils';
 
 class Cursor {
 	name: string = "";
@@ -28,8 +28,8 @@ export class Game {
 	Entity = Entity;
 	curCursor = signal<Cursor>(new Cursor);
 	selectedElement: HTMLElement | null = null;
-	playerPosHash: WritableSignal<{ [_: string]: Player }> = signal({});
 	possibleMoves: WritableSignal<Set<string>> = signal(new Set);
+	toId = toId;
 
 	constructor(private renderer: Renderer2) {
 		this.game = new GameState;
@@ -41,17 +41,7 @@ export class Game {
 	}
 
 	ngOnInit() {
-		this.updatePlayerPosHash();
-	}
-
-	updatePlayerPosHash() {
-		const hash: { [_: string]: Player } = {};
-
-		for (const player of this.game.players) {
-			hash[this.toId(player.y, player.x)] = player;
-		}
-
-		this.playerPosHash.set(hash);
+		this.game.updatePlayerPosHash();
 	}
 
 	getWidthHeightFromEl(el: HTMLElement) {
@@ -103,25 +93,16 @@ export class Game {
 		cur.el.id = id;
 	}
 
-	toId(rIdx: number, cIdx: number, prefix: string = "") {
-		return `${prefix}i${rIdx}_${cIdx}`;
-	}
-
-	idToIdx(str: string) {
-		const o = str.replace("i", "").split("_").map(Number);
-		return { r: o[0], c: o[1] };
-	}
-
 	updatePossibleMoves() {
 		if (this.selectedElement === null) {
 			return;
 		}
-		const { r, c } = this.idToIdx(this.selectedElement.id);
+		const { r, c } = idToIdx(this.selectedElement.id);
 
 		let s = new Set<string>;
 
 		for (const p of this.game.possibleMoves(r, c)) {
-			s.add(this.toId(p.y, p.x))
+			s.add(toId(p.y, p.x))
 		}
 
 		this.possibleMoves.set(s);
@@ -167,7 +148,7 @@ export class Game {
 		const board = this.boardContainer.nativeElement;
 		const x = e.x - target.offsetLeft - board.offsetLeft;
 		const y = e.y - target.offsetTop - board.offsetTop;
-		const { r, c } = this.idToIdx(target.id);
+		const { r, c } = idToIdx(target.id);
 
 		let finalRow = r;
 		let finalCol = c;
@@ -204,7 +185,7 @@ export class Game {
 
 		const { finalRow, finalCol, orient } = this.getFinalRowColOrient(e, target);
 
-		const element = board.querySelector(this.toId(finalRow, finalCol, "#")) as HTMLElement;
+		const element = board.querySelector(toId(finalRow, finalCol, "#")) as HTMLElement;
 
 		this.setCursorYX(element.offsetTop, element.offsetLeft);
 
@@ -223,9 +204,9 @@ export class Game {
 
 	handlePlayerUp(_e: PointerEvent, target: HTMLElement) {
 		if (this.possibleMoves().has(target.id)) {
-			const { r, c } = this.idToIdx(target.id);
+			const { r, c } = idToIdx(target.id);
 			this.actions.movePlayerById(this.game.players[this.game.curPlayerIdx()].id, r, c);
-			this.updatePlayerPosHash();
+			this.game.updatePlayerPosHash();
 			this.possibleMoves.set(new Set);
 			this.actions.changeTurn();
 			this.game.checkIsGameOver();

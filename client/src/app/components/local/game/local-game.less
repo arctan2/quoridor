@@ -5,6 +5,8 @@
 }
 
 .board-container {
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 }
 
@@ -52,3 +54,25 @@
 		border-radius: 6px;
 	}
 }
+
+@media(max-width: 55rem) {
+	.flex-center{
+		flex-direction: column;
+	}
+
+	.board-container{
+		align-items: center;
+	}
+
+	#game-info {
+		display: flex;
+		flex-direction: row;
+		margin: 0 5%;
+		font-family: monospace;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+	}
+}
+

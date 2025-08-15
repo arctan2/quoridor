@@ -54,6 +54,12 @@ public class GameState implements GameActions {
 		return false;
 	}
 
+	public boolean isCurTurnBySessionId(String sessionId) {
+		Player p = players.get(curPlayerIdx);
+		if(p == null) return false;
+		return p.sessionId.equals(sessionId);
+	}
+
 	static int[][] plankChecks = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
 	static int[][][] diagChecks = {
@@ -137,6 +143,29 @@ public class GameState implements GameActions {
 		return coords;
 	}
 
+	public boolean isMovePosssibleOfCurrentPlayer(int y, int x) {
+		Player p = players.get(curPlayerIdx);
+		
+		if(p == null) return false;
+
+		List<Coord> possible = possibleMoves(p.y, p.x);
+
+		for(Coord c : possible) {
+			if(c.x == x && c.y == y) return true;
+		}
+
+		return false;
+	}
+
+	public Player getPlayerBySessionId(String sessionId) {
+		for(Player p : players) {
+			if(p.sessionId.equals(sessionId)) {
+				return p;
+			}
+		}
+		return null;
+	}
+
 	boolean dfs(int curY, int curX, Coord end, Set<String> visited) {
 		if(!this.board.isYXInBounds(curY, curX)) return false;
 		visited.add(String.format("%d_%d", curY, curX));
@@ -191,14 +220,14 @@ public class GameState implements GameActions {
 		int pos = 0;
 
 		for(Player p : this.players) {
-			if(p.id.equals(id)) return pos;
+			if(p.sessionId.equals(id)) return pos;
 			pos++;
 		}
 
 		return -1;
 	}
 
-	void checkIsGameOver() {
+	public void checkIsGameOver() {
 		if(this.ranks.size() == this.players.size() - 1) {
 			for(Player p : this.players) {
 				if(this.ranksIndexOfId(p.id) == -1) {
@@ -211,9 +240,9 @@ public class GameState implements GameActions {
 	}
 
 	@Override
-	public void movePlayerById(String id, int y, int x) {
+	public void movePlayerBySessionId(String sessionId, int y, int x) {
 		for(Player p : this.players) {
-			if(p.id == id) {
+			if(p.sessionId.equals(sessionId)) {
 				p.y = y;
 				p.x = x;
 				if(p.isAtEnd()) {
@@ -225,8 +254,8 @@ public class GameState implements GameActions {
 	}
 
 	@Override
-	public void placePlankOfPlayer(String pid, int y, int x, Board.Orient orient) {
-		int playerIdx = this.playersIndexOfId(pid);
+	public void placePlankBySessionId(String sessionId, int y, int x, Board.Orient orient) {
+		int playerIdx = this.playersIndexOfId(sessionId);
 		if(playerIdx == -1) return;
 		this.board.placePlank(y, x, orient);
 		this.players.get(playerIdx).planksLeft--;

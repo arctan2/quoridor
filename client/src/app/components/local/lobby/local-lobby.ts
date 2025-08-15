@@ -13,7 +13,7 @@ import { setLocalGameState } from '../../../game/session-store';
 })
 export class LocalLobby {
 	private router = inject(Router);
-	playersColorIdxs: number[] = [-1, -1];
+	playersColorIdxs: number[] = [-1, -1, -1, -1];
 	Colors = Colors;
 	countDown = signal(-1);
 	countDownInterval = -1;

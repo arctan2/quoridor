@@ -2,6 +2,6 @@ package game;
 
 public interface GameActions {
 	public void changeTurn();
-	public void movePlayerById(String id, int y, int x);
-	public void placePlankOfPlayer(String pid, int y, int x, Board.Orient orient);
+	public void movePlayerBySessionId(String id, int y, int x);
+	public void placePlankBySessionId(String sessionId, int y, int x, Board.Orient orient);
 }

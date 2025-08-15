@@ -1,6 +1,7 @@
 import { signal, WritableSignal } from "@angular/core";
 import { Board, Orient } from "./board";
 import { Coord, Player } from "./player";
+import { toId } from "../ts/utils";
 
 export class GameState implements GameActions {
 	board: Board = new Board;
@@ -9,6 +10,7 @@ export class GameState implements GameActions {
 	curPlayerIdx: WritableSignal<number> = signal(-1);
 	isStopInput: WritableSignal<boolean> = signal(false);
 	isGameOver: WritableSignal<boolean> = signal(false);
+	playerPosHash: WritableSignal<{ [_: string]: Player }> = signal({});
 
 	initPlayers(players: Player[]) {
 		const playerPos = [
@@ -25,6 +27,16 @@ export class GameState implements GameActions {
 		this.players = players;
 	}
 
+	updatePlayerPosHash() {
+		const hash: { [_: string]: Player } = {};
+
+		for (const player of this.players) {
+			hash[toId(player.y, player.x)] = player;
+		}
+
+		this.playerPosHash.set(hash);
+	}
+
 	changeTurn() {
 		this.curPlayerIdx.update(v => {
 			let temp = v + 1;
@@ -38,6 +50,15 @@ export class GameState implements GameActions {
 			}
 			return temp;
 		});
+	}
+
+	setCurTurnIdxByPlayerId(playerId: string) {
+		for(let i = 0; i < this.players.length; i++) {
+			if(this.players[i].id === playerId) {
+				this.curPlayerIdx.set(i);
+				return;
+			}
+		}
 	}
 
 	isYXPlayer(y: number, x: number) {

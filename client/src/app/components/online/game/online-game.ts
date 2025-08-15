@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SessionStorageKey } from '../../../game/session-store';
 import { Game } from '../../game/game';
 import { WebsocketService } from '../../../websocket/websocket-service';
 import { GameActions, GameState } from '../../../game/game';
 import { NgStyle } from '@angular/common';
 import { WsResponse } from '../../../types/response';
-import { Board } from '../../../game/board';
+import { Board, Orient } from '../../../game/board';
 import { Coord, Player } from '../../../game/player';
 import { OnlineGameActions } from './online-game-actions';
 
@@ -17,7 +17,6 @@ import { OnlineGameActions } from './online-game-actions';
   styleUrl: './online-game.less'
 })
 export class OnlineGame {
-	private router = inject(Router);
 	private route = inject(ActivatedRoute);
 	private playerId: string = "";
 	private gameId: string = "";
@@ -72,8 +71,12 @@ export class OnlineGame {
 		game.curPlayerIdx.set(gameData.curPlayerIdx as any);
 		game.isGameOver.set(gameData.isGameOver as any);
 
+		if(gameData.players[gameData.curPlayerIdx as any].id !== this.playerId) {
+			game.isStopInput.set(true);
+		}
+
 		this.game.set(game);
-		this.actions.set(new OnlineGameActions(game, this.ws));
+		this.actions.set(new OnlineGameActions(this.gameId, game, this.ws));
 	}
 
 	onConnect() {
@@ -92,8 +95,6 @@ export class OnlineGame {
 
 			this.errMsg.set("");
 
-			console.log(res.data);
-
 			this.initGame(res.data);
 		});
 
@@ -111,11 +112,84 @@ export class OnlineGame {
 			this.ws.send(`/app/game/${this.gameId}/game-state`, null);
 		});
 
+		this.ws.subscribe("/user/game/move-player", (resStr) => {
+			const res: WsResponse<{
+				coord: Coord,
+				playerId: string,
+				newCurPlayerId: string
+			}> = JSON.parse(resStr);
+
+			if(res.err) {
+				this.ws.disconnect();
+				this.errMsg.set(res.msg);
+				return;
+			}
+
+			const game = this.game();
+
+			if(game === null) return;
+
+			if(this.playerId !== res.data.playerId) {
+				game.movePlayerById(res.data.playerId, res.data.coord.y, res.data.coord.x);
+			}
+
+			game.setCurTurnIdxByPlayerId(res.data.newCurPlayerId);
+			if(res.data.newCurPlayerId === this.playerId) {
+				game.isStopInput.set(false);
+			}
+			game.updatePlayerPosHash();
+		});
+
+		this.ws.subscribe("/user/game/game-over", (resStr) => {
+			const ranks: Player[] = JSON.parse(resStr);
+
+			const game = this.game();
+
+			if(game === null) return;
+
+			game.ranks = ranks;
+			game.isGameOver.set(true);
+			game.isStopInput.set(false);
+		});
+
+		this.ws.subscribe("/user/game/place-plank", (resStr) => {
+			const res: WsResponse<{
+				y: number,
+				x: number,
+				orient: Orient,
+				playerId: string,
+				newCurPlayerId: string,
+			}> = JSON.parse(resStr);
+
+			if(res.err) {
+				this.ws.disconnect();
+				this.errMsg.set(res.msg);
+				return;
+			}
+
+			const game = this.game();
+
+			if(game === null) return;
+
+			if(this.playerId !== res.data.playerId) {
+				game.placePlankOfPlayer(res.data.playerId, res.data.y, res.data.x, res.data.orient);
+			}
+
+			game.setCurTurnIdxByPlayerId(res.data.newCurPlayerId);
+
+			if(res.data.newCurPlayerId === this.playerId) {
+				game.isStopInput.set(false);
+			}
+		});
+
 		this.ws.send(`/app/game/${this.gameId}/game-state`, null);
 	}
 
 	ngOnDestroy() {
 		this.ws.unsubscribe("/user/game/game-state-res");
 		this.ws.unsubscribe("/user/game/reconnect-res");
+		this.ws.unsubscribe("/user/game/move-player");
+		this.ws.unsubscribe("/user/game/place-plank");
+		this.ws.unsubscribe("/user/game/game-over");
 	}
 }

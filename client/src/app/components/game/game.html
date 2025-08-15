@@ -42,17 +42,17 @@
 										'possible-move': possibleMoves().has(toId(rIdx, cIdx))
 									}"
 								>
-									@if(toId(rIdx, cIdx) in playerPosHash()) {
+									@if(toId(rIdx, cIdx) in game.playerPosHash()) {
 										<div
 											class="player"
 											[id]="toId(rIdx, cIdx)"
 											[ngStyle]="{
-												backgroundColor: playerPosHash()[toId(rIdx, cIdx)].color,
+												backgroundColor: game.playerPosHash()[toId(rIdx, cIdx)].color,
 											}"
 											[ngClass]="{
 												'disable-input':
 													this.game.players[game.curPlayerIdx()].color !==
-													playerPosHash()[toId(rIdx, cIdx)].color
+													game.playerPosHash()[toId(rIdx, cIdx)].color
 											}"
 										></div>
 									}

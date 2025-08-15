@@ -4,7 +4,7 @@ export enum Entity {
 	Plank = "Plank",
 }
 
-export enum Orient { H = "hori", V = "vert" }
+export enum Orient { H = "H", V = "V" };
 
 export class Board {
 	board: Entity[][];
